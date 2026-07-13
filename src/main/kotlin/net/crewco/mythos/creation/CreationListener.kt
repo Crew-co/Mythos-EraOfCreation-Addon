@@ -91,10 +91,13 @@ class CreationListener(
     fun onReleased(event: RoleReleasedEvent) {
         if (event.role.id != "uranus") return
 
-        Bukkit.getServer().sendMessage(mm(""))
-        Bukkit.getServer().sendMessage(mm("<gray>The sky is cut from the earth, and staggers back, and does not come down again."))
-        Bukkit.getServer().sendMessage(mm("<dark_gray><i>Where the blood fell, things grew that nobody wanted."))
-        Bukkit.getServer().sendMessage(mm(""))
+        // The Chronicle outlives this addon. Three ages from now, a player who wasn't
+        // born when this happened can type /chronicle era chaos and read who did it.
+        mythos.chronicle.record(
+            "story",
+            "<gray>The sky was cut from the earth with a sickle of grey adamant. " +
+                "<dark_gray><i>Gaia made it. One of her children was willing to use it.",
+        )
 
         // Everything he buried comes back up.
         context.schedulers.global {

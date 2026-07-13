@@ -14,9 +14,7 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
 
-    // Local dev without any GitHub token at all:
-    //   host:  ./gradlew publishApiLocally
-    //   core:  ./gradlew publishCoreLocally
+    // Local dev without any GitHub token at all:  (in the Mythos repo) ./gradlew publishApiLocally
     mavenLocal()
 
     // The host's addon-api.
@@ -28,27 +26,18 @@ repositories {
             password = providers.gradleProperty("gpr.token").orNull ?: System.getenv("GITHUB_TOKEN")
         }
     }
-    // MythosCore's own API — roles, spirits, eras, powers, events.
-    maven {
-        name = "MythosCore"
-        url = uri("https://maven.pkg.github.com/${property("coreRepo")}")
-        credentials {
-            username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
-            password = providers.gradleProperty("gpr.token").orNull ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
 }
 
 dependencies {
     compileOnly("dev.folia:folia-api:$foliaApiVersion")
 
-    // The host's api: AddonBase, AddonContext, @Command.
+    // ONE dependency: the Mythos API. It carries both halves —
+    //   net.crewco.mythos.addon/command/menu/hud  (the addon platform)
+    //   net.crewco.mythos.api.*                   (roles, spirits, eras, powers, events)
+    //
+    // compileOnly, ALWAYS. The host provides these classes at runtime; a shaded copy is
+    // a different class with the same name and every `instanceof` silently fails.
     compileOnly("${property("hostGroup")}:mythos-addon-api:${property("hostApiVersion")}")
-
-    // MythosCore's api: Mythos, RoleService, SpiritService, EraService, the events.
-    // compileOnly, ALWAYS. At runtime these classes come out of the loaded MythosCore
-    // addon (declared in addon.yml `depends:`). Shade it and every `instanceof` breaks.
-    compileOnly("${property("coreGroup")}:mythos-core:${property("coreVersion")}")
 
     compileOnly(kotlin("stdlib"))
 }

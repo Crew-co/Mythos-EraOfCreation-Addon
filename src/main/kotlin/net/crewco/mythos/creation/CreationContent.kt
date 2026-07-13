@@ -5,9 +5,14 @@ import net.crewco.mythos.api.era.Objective
 import net.crewco.mythos.api.role.ClaimResult
 import net.crewco.mythos.api.role.ClaimRule
 import net.crewco.mythos.api.role.ClaimRules
+import net.crewco.mythos.api.role.Endurance
 import net.crewco.mythos.api.role.RoleDefinition
 import net.crewco.mythos.api.role.RoleTier
 import net.crewco.mythos.api.role.Succession
+import net.crewco.mythos.api.story.beats
+import net.crewco.mythos.api.story.line
+import net.crewco.mythos.api.story.pause
+import net.crewco.mythos.api.story.title
 
 /**
  * The cast and the score of the first age.
@@ -44,6 +49,41 @@ object CreationContent {
             "Then Earth, broad-breasted, the ever-sure foundation.",
             "And Earth bore Sky to cover her, equal to herself.",
         ),
+        // The curtain going up. The engine plays these beat by beat, and holds the world
+        // still while they land — nobody can claim anything mid-scene.
+        prologue = beats {
+            pause(20)
+            line("<dark_gray><i>Before anything, there was the gap.", delayTicks = 40)
+            line("<dark_gray><i>Not darkness — darkness is a thing. This was the absence of things.", delayTicks = 60)
+            pause(30)
+            line("<gray>And then, for no reason anyone will ever record: <white>something.", delayTicks = 50)
+            pause(40)
+            line("<white>Eight names exist. Nobody is wearing them. <gold>/claim", delayTicks = 20)
+            line("<dark_gray><i>Everyone else waits in the dark. That is not a punishment. It is a queue.", delayTicks = 30)
+        },
+
+        // The curtain coming down. This is the last thing the Age of Chaos ever says,
+        // and it plays *before* the Titanomachy's prologue — so the story finishes
+        // instead of being trampled by the next one starting.
+        epilogue = beats {
+            pause(30)
+            title(
+                "<dark_red>The Sky Is Cut From The Earth",
+                "<gray>and staggers back, and does not come down again",
+                delayTicks = 20,
+                sound = "minecraft:entity.wither.death",
+            )
+            pause(60)
+            line("<gray>Where the blood fell on the earth, things grew that nobody wanted:", delayTicks = 50)
+            line("<dark_gray><i>the Furies, who remember every oath.", delayTicks = 45)
+            line("<dark_gray><i>the Giants, who will try this again.", delayTicks = 45)
+            line("<dark_gray><i>and, out of the foam where it fell on the sea — something beautiful, and much worse.", delayTicks = 55)
+            pause(50)
+            line("<gray>The son who did it is holding the sickle.", delayTicks = 50)
+            line("<gray>He has learned exactly one lesson from all this, and it is the wrong one.", delayTicks = 60)
+            pause(60)
+        },
+
         objectives = listOf(
             Objective("chaos_stirs", "Something stirs in the gap"),
             Objective("earth_and_sky", "Earth is covered by Sky"),
@@ -65,6 +105,14 @@ object CreationContent {
         lore: List<String>,
         powers: List<String> = emptyList(),
         succession: Succession = Succession.QUEUE,
+        /**
+         * ETERNAL: still on stage when the story moves on (Gaia is the ground under
+         * Troy; Tartarus is where they'll put Kronos).
+         * ERA: their part is played. When the age ends they go back to the spirit
+         * world with an epithet and a pocketful of essence, and the name is sealed
+         * until some later myth reopens it.
+         */
+        endurance: Endurance = Endurance.ETERNAL,
     ) = RoleDefinition(
         id = id,
         displayName = name,
@@ -75,10 +123,16 @@ object CreationContent {
         color = color,
         lore = lore,
         powers = powers,
-        // The only gate on the first age is being *there* — the world is empty and
-        // someone has to be first. Turn `claiming.require-permission` on in
-        // MythosCore's config.yml if you want a hand-picked pantheon instead.
-        claimRules = listOf(ClaimRules.duringEra(ERA)),
+        endurance = endurance,
+        // sinceEra, NOT duringEra: the Primordials persist. Gaia is still the ground
+        // under the Trojan War — if her seat falls vacant in a later age, someone must
+        // still be able to take it. `duringEra` would seal her out of her own world the
+        // moment the story moved on.
+        //
+        // The only gate on the first age is being *there*: the world is empty and
+        // someone has to be first. Turn `claiming.require-permission` on in MythosCore's
+        // config.yml if you want a hand-picked pantheon instead.
+        claimRules = listOf(ClaimRules.sinceEra(ERA)),
         succession = succession,
     )
 
@@ -88,6 +142,7 @@ object CreationContent {
             listOf("the void", "the gap"),
             listOf("You are the space where things are not yet.", "Everything that follows is a wound in you."),
             powers = listOf("unmake"),
+            endurance = Endurance.ERA, // nothing in the Titanomachy is about the void
         ),
         primordial(
             "gaia", "Gaia", "<green>",
@@ -108,10 +163,20 @@ object CreationContent {
             listOf("night", "fear"),
             listOf("Even Zeus will fear you, one day.", "You are older than his fear."),
             powers = listOf("veil"),
+            endurance = Endurance.ERA, // she matters again much later — a myth can reopen her
         ),
-        primordial("erebus", "Erebus", "<black>", listOf("darkness", "shadow"), listOf("You are the dark that is not merely an absence of light.")),
+        primordial(
+            "erebus", "Erebus", "<black>", listOf("darkness", "shadow"),
+            listOf("You are the dark that is not merely an absence of light."),
+            endurance = Endurance.ERA,
+        ),
         primordial("tartarus", "Tartarus", "<dark_red>", listOf("the abyss", "the prison"), listOf("You are as far beneath Hades as the earth is beneath the sky.", "Things are put into you. They do not come out.")),
-        primordial("pontus", "Pontus", "<blue>", listOf("sea", "depth"), listOf("The sea, before anyone thought to rule it.")),
+        primordial(
+            "pontus", "Pontus", "<blue>", listOf("sea", "depth"),
+            listOf("The sea, before anyone thought to rule it."),
+            endurance = Endurance.ERA, // Poseidon is coming, and he doesn't share
+        ),
+        // Eros stays. Desire does not go out of fashion, and the Iliad is his fault.
         primordial("eros", "Eros", "<light_purple>", listOf("desire", "generation"), listOf("Nothing would ever have made anything else, without you.")),
     )
 
@@ -128,6 +193,9 @@ object CreationContent {
         lore = listOf("A child of Earth and Sky. Your father is afraid of you, and he is right to be."),
         claimRules = listOf(BORN_NOT_CLAIMED),
         succession = Succession.QUEUE,
+        // ETERNAL, emphatically: the Titans don't retire when the Age of Chaos ends.
+        // They walk straight into the next addon's story as its entire antagonist cast.
+        endurance = Endurance.ETERNAL,
     )
 
     val TITANS = listOf(
