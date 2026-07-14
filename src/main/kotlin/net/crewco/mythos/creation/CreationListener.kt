@@ -59,9 +59,25 @@ class CreationListener(
      */
     @EventHandler
     fun onSpirit(event: PlayerBecameSpiritEvent) {
-        if (mythos.eras.currentId() != era) return
+        // "" means the world has not decided what age it is yet — which, at first boot, it hasn't.
+        // Treating that as "not my era" is what left the spirits of the Age of Chaos standing in the
+        // overworld, and it was the engine's race, not this addon's; but a story should survive it.
+        val now = mythos.eras.currentId()
+        if (now != era && now.isNotEmpty()) return
+
         context.schedulers.globalDelayed(20) {
             mythos.realms.send(event.player, "void", "You drift out of the world, because there isn't one.")
+        }
+    }
+
+    /** And when the age actually begins, sweep anyone who slipped through into the Gap. */
+    @EventHandler
+    fun onChaosBegins(event: EraAdvancedEvent) {
+        if (event.to.id != era) return
+        context.schedulers.globalDelayed(60) {
+            mythos.spirits.spirits().mapNotNull { Bukkit.getPlayer(it) }
+                .filter { mythos.realms.realmOf(it)?.id != "void" }
+                .forEach { mythos.realms.send(it, "void", "There is no world yet. You are in the space where things are not.") }
         }
     }
 

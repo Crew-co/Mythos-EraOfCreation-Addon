@@ -82,7 +82,14 @@ object CreationContent {
     val TARTARUS = RealmDefinition(
         id = "tartarus",
         displayName = "Tartarus",
-        kind = RealmKind.NETHER,
+        // CAVERN, not NETHER: worlds are generated from bukkit.yml (Folia forbids runtime creation),
+        // and bukkit.yml cannot set an environment. So it is a hole in the rock with no sky in it,
+        // which is what Tartarus is anyway.
+        kind = RealmKind.CAVERN,
+        platformY = 20,   // the floor
+        roofY = 55,       // and above that, solid stone, forever
+        stone = "DEEPSLATE",
+        platformMaterial = "BLACKSTONE",
         // The gods may go down — somebody has to be the jailer, and later somebody has to go
         // and let the Cyclopes out. The IMPRISONED may be here, but the leash is what stops
         // them leaving: being allowed somewhere and being able to get out are different.

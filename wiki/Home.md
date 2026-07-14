@@ -5,7 +5,7 @@
 Story #1 — the era **`chaos`**, which hands on to **`titanomachy`**.
 
 ```kotlin
-compileOnly("net.crewco:mythos-addon-api:0.1.3")
+compileOnly("net.crewco:mythos-addon-api:0.1.4")
 ```
 
 ## The mechanic worth knowing
