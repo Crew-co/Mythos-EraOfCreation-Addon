@@ -1,52 +1,37 @@
 # EraOfCreation
 
-Chaos, the Primordials, and the sickle that ended the sky. **Story #1 — the era `chaos`.**
+**Chaos, the Primordials, and the sickle that ended the sky.**
 
-A story addon for the [Mythos](https://github.com/Crew-co/Mythos) engine, built on
-[FoliaAddonTemplate](https://github.com/Crew-co/FoliaAddonTemplate). Its own repo, its
-own jar, its own release cycle — and exactly one dependency:
+A story addon for the [Mythos](https://github.com/Crew-co/Mythos) engine — the era **`chaos`**.
 
-```kotlin
-compileOnly("net.crewco:mythos-addon-api:0.1.2")
-```
+📖 **[Read the wiki →](https://github.com/Crew-co/EraOfCreation/wiki)** · roles, powers, extension points
 
-No `depends:` in addon.yml. The engine is the plugin, not an addon: it's already running
-before this jar is loaded.
+## Install
+
+Drop the jar in `plugins/Mythos/addons/`. That's it — no `depends:`, no configuration, no load order
+to worry about. The engine wires the era chain at bootstrap.
 
 ## Build
 
 ```bash
 # once, in the Mythos repo:  ./gradlew publishApiLocally
 ./gradlew build          # → build/libs/EraOfCreation-0.1.0.jar
-./gradlew deployAddon    # set testServerPath in ~/.gradle/gradle.properties first
+./gradlew deployAddon    # set testServerPath in ~/.gradle/gradle.properties
 ```
 
-Drop the jar in `plugins/Mythos/addons/`. `/addons` should list it.
+```kotlin
+compileOnly("net.crewco:mythos-addon-api:0.1.3")   // the only dependency
+```
 
-## What it registers
+`compileOnly`, never `implementation` — a shaded copy of the API is a different class with the same
+name, and the addon will silently refuse to load.
 
-- **Era** `chaos` → declares `next = "titanomachy"`. It does not know or care what
-  registers that.
-- **8 Primordials, claimed** — Chaos, Gaia, Uranus, Nyx, Erebus, Tartarus, Pontus,
-  Eros. Eight seats. Everyone else is a spirit, in the queue, waiting for one to fall
-  vacant.
-- **12 Titans, *not* claimed** — their `ClaimRule` denies everyone, always. The only
-  way to become Kronos is for whoever holds **Gaia** to reach into the spirit world and
-  pull you out of it: `/power birth <spirit> <titan>`.
-- **Powers** — `birth` (Gaia makes a spirit real) · `imprison` (Uranus buries a child at
-  bedrock) · `sickle` (Gaia can only forge it *after* he does) · `veil` (Nyx) ·
-  `unmake` (Chaos).
+## Testing it alone
 
-## The shape
+`/mythos dev` — every crowd-sized number in this chapter becomes 1. You are one person; the story was
+written for a hundred.
 
-Uranus is unkillable — by anything except the sickle. That isn't hard-coded in core:
-core fires `DivineDeathEvent` with the blow pre-cancelled, and this addon un-cancels it
-when the killer is holding a specific PDC-tagged hoe. The same hook is Achilles' heel,
-ten addons later.
+---
 
-When the sickle falls, `the_unmaking` — the era's last required objective — completes,
-and core advances the world to `titanomachy`. This addon then goes quiet forever,
-without ever learning what came next.
-
-`compileOnly`, never `implementation` — a shaded copy of the API is a different class
-with the same name, and the addon silently refuses to load.
+*Part of [Mythos](https://github.com/Crew-co/Mythos): a Greek mythology engine for Folia, where every
+story is a separate jar.*

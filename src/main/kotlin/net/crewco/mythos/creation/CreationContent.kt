@@ -58,6 +58,8 @@ object CreationContent {
         ),
         flight = true,
         still = true, // no time, no weather, no mobs. The Void does not have a Tuesday.
+        ambientSound = "minecraft:ambient.cave",
+        ambientParticle = "SMOKE",
         platformRadius = 8,
         platformMaterial = "BLACK_CONCRETE",
     )
@@ -96,6 +98,8 @@ object CreationContent {
             "<dark_gray><i>Things are put into you. They do not come out.",
         ),
         ambient = listOf(PotionEffectType.BLINDNESS, PotionEffectType.MINING_FATIGUE),
+        ambientSound = "minecraft:ambient.nether_wastes.mood",
+        ambientParticle = "ASH",
     )
 
     /** Titans cannot be claimed. Gaia bears them, or they don't exist. */
